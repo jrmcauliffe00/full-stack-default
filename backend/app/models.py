@@ -1,7 +1,9 @@
+import datetime
 import uuid
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
+from sqlalchemy import Column, String, ARRAY
 
 
 # Shared properties
@@ -60,6 +62,21 @@ class UsersPublic(SQLModel):
 class ItemBase(SQLModel):
     title: str = Field(min_length=1, max_length=255)
     description: str | None = Field(default=None, max_length=255)
+    location: str | None = Field(default=None, max_length=255)
+    price: str | None = Field(default=None, max_length=255)
+    difficulty: str | None = Field(default=None, max_length=255)
+    type: str | None = Field(default=None, max_length=255)
+    category: str | None = Field(default=None, max_length=255)
+    tags: list[str] = Field(
+        sa_column=Column(ARRAY(String)), default_factory=list
+    )
+    link: str | None = Field(default=None, max_length=255)
+    picture: str | None = Field(default=None, max_length=255)
+    in_featured: bool = Field(default=False)
+    rating: float | None = Field(default=None)
+    tries: int | None = Field(default=None)
+    favorites: int | None = Field(default=None)
+    duration: datetime.timedelta | None = Field(default=None)
 
 
 # Properties to receive on item creation
@@ -79,6 +96,7 @@ class Item(ItemBase, table=True):
         foreign_key="user.id", nullable=False, ondelete="CASCADE"
     )
     owner: User | None = Relationship(back_populates="items")
+    # created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
 
 
 # Properties to return via API, id is always required

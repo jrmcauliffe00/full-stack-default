@@ -57,6 +57,10 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str = ""
     POSTGRES_DB: str = ""
 
+    OPENFGA_API_URL: str = ""
+    OPENFGA_STORE_ID: str = ""
+    OPENFGA_AUTHORIZATION_MODEL_ID: str = ""
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
@@ -67,7 +71,7 @@ class Settings(BaseSettings):
             host=self.POSTGRES_SERVER,
             port=self.POSTGRES_PORT,
             path=self.POSTGRES_DB,
-        )
+        ) # type: ignore
 
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
@@ -113,6 +117,9 @@ class Settings(BaseSettings):
         self._check_default_secret(
             "FIRST_SUPERUSER_PASSWORD", self.FIRST_SUPERUSER_PASSWORD
         )
+        self._check_default_secret("OPENFGA_API_URL", self.OPENFGA_API_URL)
+        self._check_default_secret("OPENFGA_STORE_ID", self.OPENFGA_STORE_ID)
+        self._check_default_secret("OPENFGA_AUTHORIZATION_MODEL_ID", self.OPENFGA_AUTHORIZATION_MODEL_ID)
 
         return self
 

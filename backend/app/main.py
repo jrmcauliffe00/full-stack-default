@@ -1,7 +1,10 @@
+from app.openfga.fgaMiddleware import initialize_fga_client
 import sentry_sdk
-from fastapi import FastAPI
+from fastapi import FastAPI, logger
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
+
+from contextlib import asynccontextmanager
 
 from app.api.main import api_router
 from app.core.config import settings

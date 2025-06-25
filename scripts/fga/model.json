@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.1",
+  "type_definitions": [
+    {
+      "type": "user",
+      "relations": {},
+      "metadata": null
+    },
+    {
+      "type": "item",
+      "relations": {
+        "editor": {
+          "union": {
+            "child": [
+              {
+                "this": {}
+              },
+              {
+                "computedUserset": {
+                  "relation": "owner"
+                }
+              }
+            ]
+          }
+        },
+        "completed": {
+          "union": {
+            "child": [
+              {
+                "this": {}
+              },
+              {
+                "computedUserset": {
+                  "relation": "owner"
+                }
+              }
+            ]
+          }
+        },
+        "inprogress": {
+          "this": {}
+        },
+        "owner": {
+          "this": {}
+        },
+        "recommened": {
+          "this": {}
+        },
+        "alternative": {
+          "this": {}
+        },
+        "can_recommend": {
+          "union": {
+            "child": [
+              {
+                "computedUserset": {
+                  "relation": "completed"
+                }
+              },
+              {
+                "computedUserset": {
+                  "relation": "owner"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "metadata": {
+        "relations": {
+          "editor": {
+            "directly_related_user_types": [
+              {
+                "type": "user"
+              }
+            ]
+          },
+          "completed": {
+            "directly_related_user_types": [
+              {
+                "type": "user"
+              }
+            ]
+          },
+          "inprogress": {
+            "directly_related_user_types": [
+              {
+                "type": "user"
+              }
+            ]
+          },
+          "owner": {
+            "directly_related_user_types": [
+              {
+                "type": "user"
+              }
+            ]
+          },
+          "recommened": {
+            "directly_related_user_types": [
+              {
+                "type": "user"
+              }
+            ]
+          },
+          "alternative": {
+            "directly_related_user_types": [
+              {
+                "type": "item"
+              }
+            ]
+          },
+          "can_recommend": {
+            "directly_related_user_types": []
+          }
+        }
+      }
+    }
+  ]
+}

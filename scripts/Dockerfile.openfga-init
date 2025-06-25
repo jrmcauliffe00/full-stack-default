@@ -1,0 +1,8 @@
+FROM alpine:3.19
+
+RUN apk add --no-cache bash curl jq
+
+COPY openfga-init.sh /scripts/openfga-init.sh
+COPY fga/model.json /scripts/fga/model.json
+
+ENTRYPOINT ["/bin/bash", "/scripts/openfga-init.sh"]
