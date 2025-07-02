@@ -1,178 +1,186 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Star, MapPin, User } from 'lucide-react';
-import { ItemPublic } from '../types/api';
+import {
+  Box,
+  Badge,
+  IconButton,
+  Image,
+  Text,
+  Heading,
+  HStack,
+  Flex,
+  Wrap,
+  WrapItem,
+} from "@chakra-ui/react"
+import {
+  useColorModeValue,
+} from "@/components/ui/color-mode"
+import { Star, MapPin, User } from "lucide-react"
+import { ItemPublic } from "@/client/types.gen"
 
 interface ItemTileProps {
-  item: ItemPublic;
-  onToggleFavorite?: (id: string) => void;
-  currentUserId?: string;
-  userCompletedItems?: string[];
-  userFavoritedItems?: string[];
+  item: ItemPublic
+  onToggleFavorite?: (id: string) => void
+  currentUserId?: string
+  userCompletedItems?: string[]
+  userFavoritedItems?: string[]
 }
 
-export function ItemTile({ 
-  item, 
-  onToggleFavorite, 
+export function ItemTile({
+  item,
+  onToggleFavorite,
   currentUserId,
   userCompletedItems = [],
-  userFavoritedItems = []
+  userFavoritedItems = [],
 }: ItemTileProps) {
-  const isCompleted = userCompletedItems.includes(item.id);
-  const isFavorited = userFavoritedItems.includes(item.id);
-  const isOwned = item.owner_id === currentUserId;
+  const isCompleted = userCompletedItems.includes(item.id)
+  const isFavorited = userFavoritedItems.includes(item.id)
+  const isOwned = item.owner_id === currentUserId
 
-  const getDifficultyColor = (difficulty?: string | null) => {
-    switch (difficulty?.toLowerCase()) {
-      case 'easy':
-        return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400';
-      case 'hard':
-        return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
-      default:
-        return 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400';
-    }
-  };
+  const difficultyColor = {
+    easy: "green",
+    medium: "yellow",
+    hard: "red",
+  }[item.difficulty?.toLowerCase() || ""] || "gray"
 
-  const getTypeColor = (type?: string | null) => {
-    const colors: Record<string, string> = {
-      travel: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-      adventure: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
-      personal: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
-      skill: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
-      fitness: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-      creative: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400',
-    };
-    return colors[type?.toLowerCase() || ''] || 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400';
-  };
+  const typeColor = {
+    travel: "blue",
+    adventure: "orange",
+    personal: "purple",
+    skill: "indigo",
+    fitness: "teal",
+    creative: "pink",
+  }[item.type?.toLowerCase() || ""] || "gray"
+
+  const bgCard = useColorModeValue("white", "gray.800")
+  const hoverBorder = useColorModeValue("gray.200", "gray.600")
 
   return (
-    <Card className="tile-shadow hover-scale animate-fade-in group cursor-pointer transition-all duration-200 hover:border-primary/20">
+    <Box
+      bg={bgCard}
+      borderWidth="1px"
+      borderRadius="lg"
+      overflow="hidden"
+      boxShadow="sm"
+      _hover={{ boxShadow: "md", borderColor: hoverBorder as any }}
+      transition="all 0.2s"
+      cursor="pointer"
+    >
       {item.picture && (
-        <div className="relative h-32 w-full overflow-hidden rounded-t-lg">
-          <img 
-            src={item.picture.startsWith('http') ? item.picture : `https://images.unsplash.com/${item.picture}?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80`}
+        <Box position="relative" height="130px" overflow="hidden">
+          <Image
+            src={
+              item.picture.startsWith("http")
+                ? item.picture
+                : `https://images.unsplash.com/${item.picture}?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80`
+            }
             alt={item.title}
-            className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+            objectFit="cover"
+            width="100%"
+            height="100%"
+            transition="transform 0.2s"
+            _groupHover={{ transform: "scale(1.05)" }}
           />
-          <div className="absolute top-2 right-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleFavorite?.(item.id);
-              }}
-              className="h-8 w-8 p-0 bg-black/20 hover:bg-black/40 backdrop-blur-sm"
-            >
-              <Star 
-                className={`h-4 w-4 transition-colors ${
-                  isFavorited 
-                    ? 'fill-yellow-400 text-yellow-400' 
-                    : 'text-white hover:text-yellow-400'
-                }`}
-              />
-            </Button>
-          </div>
-        </div>
+          <IconButton
+            aria-label="Toggle favorite"
+            position="absolute"
+            top="2"
+            right="2"
+            size="sm"
+            variant="ghost"
+            bg="blackAlpha.300"
+            _hover={{ bg: "blackAlpha.500" }}
+            color={isFavorited ? "yellow.400" : "white"}
+            onClick={(e) => {
+              e.stopPropagation()
+              onToggleFavorite?.(item.id)
+            }}
+          />
+        </Box>
       )}
-      
-      <CardHeader className={`pb-3 ${item.picture ? 'pt-4' : ''}`}>
-        <div className="flex items-start justify-between">
-          <CardTitle className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors">
+
+      <Box px={4} pt={item.picture ? 4 : 6} pb={4}>
+        <Flex justify="space-between" align="start" mb={2}>
+          <Heading size="sm" as="h2">
             {item.title}
-          </CardTitle>
+          </Heading>
           {!item.picture && (
-            <Button
-              variant="ghost"
+            <IconButton
+              aria-label="Toggle favorite"
               size="sm"
+              variant="ghost"
+              color={isFavorited ? "yellow.400" : "gray.500"}
               onClick={(e) => {
-                e.stopPropagation();
-                onToggleFavorite?.(item.id);
+                e.stopPropagation()
+                onToggleFavorite?.(item.id)
               }}
-              className="h-8 w-8 p-0 shrink-0"
-            >
-              <Star 
-                className={`h-4 w-4 transition-colors ${
-                  isFavorited 
-                    ? 'fill-yellow-400 text-yellow-400' 
-                    : 'text-muted-foreground hover:text-yellow-400'
-                }`}
-              />
-            </Button>
+            />
           )}
-        </div>
-      </CardHeader>
-      
-      <CardContent className="space-y-3">
+        </Flex>
+
         {item.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2">
+          <Text fontSize="sm" color="gray.500" mb={2} as="p">
             {item.description}
-          </p>
+          </Text>
         )}
-        
-        <div className="flex items-center gap-2 flex-wrap">
+
+        <Wrap gap={2} mt={2} mb={2}>
           {isCompleted && (
-            <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" variant="secondary">
-              Completed
-            </Badge>
+            <WrapItem>
+              <Badge colorScheme="green">Completed</Badge>
+            </WrapItem>
           )}
-          
           {item.difficulty && (
-            <Badge className={getDifficultyColor(item.difficulty)} variant="secondary">
-              {item.difficulty.charAt(0).toUpperCase() + item.difficulty.slice(1)}
-            </Badge>
+            <WrapItem>
+              <Badge colorScheme={difficultyColor}>
+                {item.difficulty.charAt(0).toUpperCase() + item.difficulty.slice(1)}
+              </Badge>
+            </WrapItem>
           )}
-          
           {item.type && (
-            <Badge className={getTypeColor(item.type)} variant="secondary">
-              {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-            </Badge>
+            <WrapItem>
+              <Badge colorScheme={typeColor}>
+                {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+              </Badge>
+            </WrapItem>
           )}
-          
           {isOwned && (
-            <Badge variant="outline" className="text-xs">
-              <User className="h-3 w-3 mr-1" />
-              Owned
-            </Badge>
+            <WrapItem>
+              <Badge variant="outline" fontSize="xs">
+                <User size={12} style={{ marginRight: "4px" }} />
+                Owned
+              </Badge>
+            </WrapItem>
           )}
-        </div>
+        </Wrap>
 
         {item.location && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <MapPin className="h-3 w-3" />
-            <span>{item.location}</span>
-          </div>
+          <HStack gap={1} fontSize="xs" color="gray.500" mb={1}>
+            <MapPin size={12} />
+            <Text>{item.location}</Text>
+          </HStack>
         )}
-        
+
         {item.rating && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-            <span>{item.rating.toFixed(1)}</span>
-          </div>
+          <HStack gap={1} fontSize="xs" color="yellow.400" mb={1}>
+            <Star size={12} />
+            <Text>{item.rating.toFixed(1)}</Text>
+          </HStack>
         )}
-        
+
         {item.tags && item.tags.length > 0 && (
-          <div className="flex gap-1 flex-wrap">
+          <Wrap gap={2} mt={2}>
             {item.tags.slice(0, 3).map((tag) => (
-              <span 
-                key={tag}
-                className="text-xs bg-muted px-2 py-1 rounded-md text-muted-foreground"
-              >
+              <Badge key={tag} fontSize="xs" colorScheme="gray">
                 #{tag}
-              </span>
+              </Badge>
             ))}
             {item.tags.length > 3 && (
-              <span className="text-xs text-muted-foreground">
+              <Text fontSize="xs" color="gray.500">
                 +{item.tags.length - 3} more
-              </span>
+              </Text>
             )}
-          </div>
+          </Wrap>
         )}
-      </CardContent>
-    </Card>
-  );
+      </Box>
+    </Box>
+  )
 }
